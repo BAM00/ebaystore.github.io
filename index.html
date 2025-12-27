@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Latest eBay Listings - Fresh Deals & Bargains</title>
+    <meta name="description" content="Discover the latest eBay listings with fresh deals and bargains. Browse through curated products with images, descriptions, and direct links to eBay.">
+    <meta name="keywords" content="eBay, listings, deals, bargains, online shopping, products, auctions, buy now">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="Latest eBay Listings - Fresh Deals & Bargains">
+    <meta property="og:description" content="Discover the latest eBay listings with fresh deals and bargains">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="">
+    <meta name="twitter:card" content="summary_large_image">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: #0064d2;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .listings-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .listing-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.5s ease;
+            position: relative;
+        }
+        
+        .listing-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .listing-card.updating {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+        
+        .listing-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background-color: #e0e0e0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .listing-card:hover .listing-image {
+            opacity: 0.9;
+        }
+        
+        .listing-content {
+            padding: 20px;
+        }
+        
+        .listing-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #0064d2;
+            line-height: 1.4;
+        }
+        
+        .listing-price {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2e7d32;
+            margin-bottom: 15px;
+        }
+        
+        .listing-description {
+            color: #666;
+            margin-bottom: 15px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            line-height: 1.5;
+        }
+        
+        .listing-link {
+            display: inline-block;
+            background-color: #0064d2;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+        
+        .listing-link:hover {
+            background-color: #0052a3;
+        }
+        
+        .listing-meta {
+            font-size: 0.85rem;
+            color: #888;
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .listing-source {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .ebay-logo {
+            width: 16px;
+            height: 16px;
+            background-color: #e53238;
+            color: white;
+            border-radius: 3px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 10px;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 30px;
+            color: #666;
+            font-size: 0.9rem;
+            border-top: 1px solid #ddd;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 1.2rem;
+            color: #666;
+        }
+        
+        .error {
+            text-align: center;
+            padding: 40px;
+            background-color: #ffebee;
+            border-radius: 10px;
+            color: #c62828;
+            margin: 20px 0;
+        }
+        
+        .retry-button {
+            background-color: #0064d2;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 15px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .retry-button:hover {
+            background-color: #0052a3;
+        }
+        
+        .proxy-info {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 10px;
+        }
+        
+        .seo-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .seo-content h2 {
+            color: #0064d2;
+            margin-bottom: 15px;
+        }
+        
+        .seo-content p {
+            margin-bottom: 15px;
+            color: #555;
+        }
+        
+        .structured-data {
+            display: none;
+        }
+        
+        .auto-update-info {
+            background-color: #e3f2fd;
+            border-left: 4px solid #0064d2;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 0 5px 5px 0;
+            font-size: 0.9rem;
+            color: #1565c0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .auto-update-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #4caf50;
+            animation: pulse 2s infinite;
+        }
+        
+        .status-indicator.updating {
+            background-color: #ff9800;
+            animation: pulse 1s infinite;
+        }
+        
+        .status-indicator.error {
+            background-color: #f44336;
+            animation: none;
+        }
+        
+        @keyframes pulse {
+            0% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.5;
+                transform: scale(1.1);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        .refresh-button {
+            background-color: #0064d2;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.3s ease;
+        }
+        
+        .refresh-button:hover {
+            background-color: #0052a3;
+        }
+        
+        .refresh-button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .last-updated {
+            font-size: 0.85rem;
+            color: #666;
+            margin-left: 10px;
+        }
+        
+        .update-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #4caf50;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            max-width: 300px;
+        }
+        
+        .update-notification.show {
+            transform: translateX(0);
+        }
+        
+        .update-notification.error {
+            background-color: #f44336;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .listings-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .auto-update-info {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+            
+            .update-notification {
+                right: 10px;
+                left: 10px;
+                max-width: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Latest eBay Listings</h1>
+            <p class="subtitle">Fresh deals from eBay updated in real-time</p>
+        </div>
+    </header>
+    
+    <main class="container">
+        <section class="seo-content">
+            <h2>About Our eBay Listings</h2>
+            <p>Browse through the latest eBay listings featuring a wide variety of products at competitive prices. Our curated selection includes electronics, fashion, home goods, collectibles, and much more. Each listing includes detailed product information, high-quality images, and direct links to the original eBay auction or buy-it-now page.</p>
+            <p>We update our listings regularly to ensure you have access to the freshest deals and bargains available on eBay. Whether you're looking for rare collectibles or everyday essentials, you'll find great options here.</p>
+        </section>
+        
+        <section id="listings-section">
+            <div class="auto-update-info">
+                <div class="auto-update-status">
+                    <span class="status-indicator" id="status-indicator"></span>
+                    <span id="status-text">Auto-update enabled</span>
+                    <span class="last-updated" id="last-updated"></span>
+                </div>
+                <div>
+                    <button class="refresh-button" id="refresh-button" onclick="fetchListings()">Refresh Now</button>
+                </div>
+            </div>
+            
+            <h2 style="margin-bottom: 20px; color: #0064d2;">Featured Listings</h2>
+            <div id="listings-container" class="listings-container">
+                <!-- STATIC EMBEDDED LISTINGS FOR SEO -->
+                <!-- These are sample listings - in production, these would be updated by a build process -->
+                
+                <article class="listing-card" itemscope itemtype="http://schema.org/Product">
+                    <img src="https://i.ebayimg.com/images/g/1HIAAOSw~WljcQ8X/s-l500.jpg" alt="Wireless Bluetooth Headphones" class="listing-image" itemprop="image">
+                    <div class="listing-content">
+                        <h3 class="listing-title" itemprop="name">Wireless Bluetooth Headphones Noise Cancelling Over Ear</h3>
+                        <div class="listing-price" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+                            <span itemprop="priceCurrency" content="USD">$29.99</span>
+                            <meta itemprop="price" content="29.99">
+                            <meta itemprop="availability" content="https://schema.org/InStock">
+                        </div>
+                        <div class="listing-description" itemprop="description">
+                            Premium wireless Bluetooth headphones with active noise cancellation. Features include 30-hour battery life, comfortable over-ear design, and high-quality sound. Perfect for travel, work, or relaxation.
+                        </div>
+                        <div class="listing-meta">
+                            <span class="listing-source">
+                                <span class="ebay-logo">e</span>
+                                <span>eBay</span>
+                            </span>
+                            <time itemprop="availabilityStarts" datetime="2024-01-15">Jan 15, 2024</time>
+                        </div>
+                        <a href="https://www.ebay.com/itm/123456789" target="_blank" class="listing-link" itemprop="url">View on eBay</a>
+                    </div>
+                </article>
+                
+                <article class="listing-card" itemscope itemtype="http://schema.org/Product">
+                    <img src="https://i.ebayimg.com/images/g/2HIAAOSw~WljcQ8X/s-l500.jpg" alt="Smart Watch Fitness Tracker" class="listing-image" itemprop="image">
+                    <div class="listing-content">
+                        <h3 class="listing-title" itemprop="name">Smart Watch Fitness Tracker Heart Rate Monitor</h3>
+                        <div class="listing-price" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+                            <span itemprop="priceCurrency" content="USD">$45.99</span>
+                            <meta itemprop="price" content="45.99">
+                            <meta itemprop="availability" content="https://schema.org/InStock">
+                        </div>
+                        <div class="listing-description" itemprop="description">
+                            Advanced fitness tracker with heart rate monitoring, GPS tracking, and smartphone integration. Tracks steps, calories, sleep patterns, and multiple workout modes. Water-resistant design with 7-day battery life.
+                        </div>
+                        <div class="listing-meta">
+                            <span class="listing-source">
+                                <span class="ebay-logo">e</span>
+                                <span>eBay</span>
+                            </span>
+                            <time itemprop="availabilityStarts" datetime="2024-01-15">Jan 15, 2024</time>
+                        </div>
+                        <a href="https://www.ebay.com/itm/234567890" target="_blank" class="listing-link" itemprop="url">View on eBay</a>
+                    </div>
+                </article>
+                
+                <article class="listing-card" itemscope itemtype="http://schema.org/Product">
+                    <img src="https://i.ebayimg.com/images/g/3HIAAOSw~WljcQ8X/s-l500.jpg" alt="Portable Phone Charger" class="listing-image" itemprop="image">
+                    <div class="listing-content">
+                        <h3 class="listing-title" itemprop="name">20000mAh Portable Phone Charger Power Bank</h3>
+                        <div class="listing-price" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+                            <span itemprop="priceCurrency" content="USD">$19.99</span>
+                            <meta itemprop="price" content="19.99">
+                            <meta itemprop="availability" content="https://schema.org/InStock">
+                        </div>
+                        <div class="listing-description" itemprop="description">
+                            High-capacity 20000mAh power bank with fast charging technology. Dual USB ports allow charging two devices simultaneously. Compact design with LED indicator. Compatible with all smartphones and tablets.
+                        </div>
+                        <div class="listing-meta">
+                            <span class="listing-source">
+                                <span class="ebay-logo">e</span>
+                                <span>eBay</span>
+                            </span>
+                            <time itemprop="availabilityStarts" datetime="2024-01-15">Jan 15, 2024</time>
+                        </div>
+                        <a href="https://www.ebay.com/itm/345678901" target="_blank" class="listing-link" itemprop="url">View on eBay</a>
+                    </div>
+                </article>
+                
+                <article class="listing-card" itemscope itemtype="http://schema.org/Product">
+                    <img src="https://i.ebayimg.com/images/g/4HIAAOSw~WljcQ8X/s-l500.jpg" alt="Wireless Gaming Mouse" class="listing-image" itemprop="image">
+                    <div class="listing-content">
+                        <h3 class="listing-title" itemprop="name">RGB Wireless Gaming Mouse 16000 DPI</h3>
+                        <div class="listing-price" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+                            <span itemprop="priceCurrency" content="USD">$35.99</span>
+                            <meta itemprop="price" content="35.99">
+                            <meta itemprop="availability" content="https://schema.org/InStock">
+                        </div>
+                        <div class="listing-description" itemprop="description">
+                            Professional gaming mouse with 16000 DPI sensor and customizable RGB lighting. Features 7 programmable buttons, ergonomic design, and long-lasting wireless connection. Perfect for gaming and productivity.
+                        </div>
+                        <div class="listing-meta">
+                            <span class="listing-source">
+                                <span class="ebay-logo">e</span>
+                                <span>eBay</span>
+                            </span>
+                            <time itemprop="availabilityStarts" datetime="2024-01-15">Jan 15, 2024</time>
+                        </div>
+                        <a href="https://www.ebay.com/itm/456789012" target="_blank" class="listing-link" itemprop="url">View on eBay</a>
+                    </div>
+                </article>
+                
+                <article class="listing-card" itemscope itemtype="http://schema.org/Product">
+                    <img src="https://i.ebayimg.com/images/g/5HIAAOSw~WljcQ8X/s-l500.jpg" alt="USB-C Hub Adapter" class="listing-image" itemprop="image">
+                    <div class="listing-content">
+                        <h3 class="listing-title" itemprop="name">7-in-1 USB-C Hub Adapter with HDMI</h3>
+                        <div class="listing-price" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+                            <span itemprop="priceCurrency" content="USD">$24.99</span>
+                            <meta itemprop="price" content="24.99">
+                            <meta itemprop="availability" content="https://schema.org/InStock">
+                        </div>
+                        <div class="listing-description" itemprop="description">
+                            Multi-port USB-C hub with HDMI 4K output, USB 3.0 ports, SD card reader, and PD charging. Compact aluminum design perfect for laptops and tablets. Plug and play with no drivers required.
+                        </div>
+                        <div class="listing-meta">
+                            <span class="listing-source">
+                                <span class="ebay-logo">e</span>
+                                <span>eBay</span>
+                            </span>
+                            <time itemprop="availabilityStarts" datetime="2024-01-15">Jan 15, 2024</time>
+                        </div>
+                        <a href="https://www.ebay.com/itm/567890123" target="_blank" class="listing-link" itemprop="url">View on eBay</a>
+                    </div>
+                </article>
+                
+                <article class="listing-card" itemscope itemtype="http://schema.org/Product">
+                    <img src="https://i.ebayimg.com/images/g/6HIAAOSw~WljcQ8X/s-l500.jpg" alt="Bluetooth Speaker" class="listing-image" itemprop="image">
+                    <div class="listing-content">
+                        <h3 class="listing-title" itemprop="name">Waterproof Bluetooth Speaker 360° Sound</h3>
+                        <div class="listing-price" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+                            <span itemprop="priceCurrency" content="USD">$39.99</span>
+                            <meta itemprop="price" content="39.99">
+                            <meta itemprop="availability" content="https://schema.org/InStock">
+                        </div>
+                        <div class="listing-description" itemprop="description">
+                            Portable waterproof Bluetooth speaker with 360-degree surround sound. Features 24-hour battery life, IPX7 waterproof rating, and built-in microphone for hands-free calls. Perfect for outdoor adventures.
+                        </div>
+                        <div class="listing-meta">
+                            <span class="listing-source">
+                                <span class="ebay-logo">e</span>
+                                <span>eBay</span>
+                            </span>
+                            <time itemprop="availabilityStarts" datetime="2024-01-15">Jan 15, 2024</time>
+                        </div>
+                        <a href="https://www.ebay.com/itm/678901234" target="_blank" class="listing-link" itemprop="url">View on eBay</a>
+                    </div>
+                </article>
+                
+                <article class="listing-card" itemscope itemtype="http://schema.org/Product">
+                    <img src="https://i.ebayimg.com/images/g/7HIAAOSw~WljcQ8X/s-l500.jpg" alt="Laptop Stand" class="listing-image" itemprop="image">
+                    <div class="listing-content">
+                        <h3 class="listing-title" itemprop="name">Adjustable Aluminum Laptop Stand</h3>
+                        <div class="listing-price" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+                            <span itemprop="priceCurrency" content="USD">$22.99</span>
+                            <meta itemprop="price" content="22.99">
+                            <meta itemprop="availability" content="https://schema.org/InStock">
+                        </div>
+                        <div class="listing-description" itemprop="description">
+                            Ergonomic aluminum laptop stand with adjustable height and angle. Improves posture and reduces neck strain. Compatible with laptops up to 17 inches. Foldable design for easy portability and storage.
+                        </div>
+                        <div class="listing-meta">
+                            <span class="listing-source">
+                                <span class="ebay-logo">e</span>
+                                <span>eBay</span>
+                            </span>
+                            <time itemprop="availabilityStarts" datetime="2024-01-15">Jan 15, 2024</time>
+                        </div>
+                        <a href="https://www.ebay.com/itm/789012345" target="_blank" class="listing-link" itemprop="url">View on eBay</a>
+                    </div>
+                </article>
+                
+                <article class="listing-card" itemscope itemtype="http://schema.org/Product">
+                    <img src="https://i.ebayimg.com/images/g/8HIAAOSw~WljcQ8X/s-l500.jpg" alt="Wireless Keyboard" class="listing-image" itemprop="image">
+                    <div class="listing-content">
+                        <h3 class="listing-title" itemprop="name">Mechanical Wireless Keyboard RGB Backlit</h3>
+                        <div class="listing-price" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+                            <span itemprop="priceCurrency" content="USD">$49.99</span>
+                            <meta itemprop="price" content="49.99">
+                            <meta itemprop="availability" content="https://schema.org/InStock">
+                        </div>
+                        <div class="listing-description" itemprop="description">
+                            Premium mechanical wireless keyboard with customizable RGB backlighting. Features blue switches, 60% compact layout, and rechargeable battery. Perfect for gaming and typing enthusiasts.
+                        </div>
+                        <div class="listing-meta">
+                            <span class="listing-source">
+                                <span class="ebay-logo">e</span>
+                                <span>eBay</span>
+                            </span>
+                            <time itemprop="availabilityStarts" datetime="2024-01-15">Jan 15, 2024</time>
+                        </div>
+                        <a href="https://www.ebay.com/itm/890123456" target="_blank" class="listing-link" itemprop="url">View on eBay</a>
+                    </div>
+                </article>
+                
+                <article class="listing-card" itemscope itemtype="http://schema.org/Product">
+                    <img src="https://i.ebayimg.com/images/g/9HIAAOSw~WljcQ8X/s-l500.jpg" alt="Phone Case" class="listing-image" itemprop="image">
+                    <div class="listing-content">
+                        <h3 class="listing-title" itemprop="name">Military Grade Phone Case with Screen Protector</h3>
+                        <div class="listing-price" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+                            <span itemprop="priceCurrency" content="USD">$12.99</span>
+                            <meta itemprop="price" content="12.99">
+                            <meta itemprop="availability" content="https://schema.org/InStock">
+                        </div>
+                        <div class="listing-description" itemprop="description">
+                            Heavy-duty phone case with military-grade drop protection. Includes built-in screen protector and kickstand. Precise cutouts for all ports and buttons. Compatible with wireless charging.
+                        </div>
+                        <div class="listing-meta">
+                            <span class="listing-source">
+                                <span class="ebay-logo">e</span>
+                                <span>eBay</span>
+                            </span>
+                            <time itemprop="availabilityStarts" datetime="2024-01-15">Jan 15, 2024</time>
+                        </div>
+                        <a href="https://www.ebay.com/itm/901234567" target="_blank" class="listing-link" itemprop="url">View on eBay</a>
+                    </div>
+                </article>
+                
+                <article class="listing-card" itemscope itemtype="http://schema.org/Product">
+                    <img src="https://i.ebayimg.com/images/g/0HIAAOSw~WljcQ8X/s-l500.jpg" alt="Webcam" class="listing-image" itemprop="image">
+                    <div class="listing-content">
+                        <h3 class="listing-title" itemprop="name">1080P HD Webcam with Auto Focus</h3>
+                        <div class="listing-price" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+                            <span itemprop="priceCurrency" content="USD">$32.99</span>
+                            <meta itemprop="price" content="32.99">
+                            <meta itemprop="availability" content="https://schema.org/InStock">
+                        </div>
+                        <div class="listing-description" itemprop="description">
+                            High-definition 1080P webcam with auto-focus and noise-cancelling microphone. Wide-angle lens with automatic light correction. Plug and play USB connection compatible with all video conferencing software.
+                        </div>
+                        <div class="listing-meta">
+                            <span class="listing-source">
+                                <span class="ebay-logo">e</span>
+                                <span>eBay</span>
+                            </span>
+                            <time itemprop="availabilityStarts" datetime="2024-01-15">Jan 15, 2024</time>
+                        </div>
+                        <a href="https://www.ebay.com/itm/012345678" target="_blank" class="listing-link" itemprop="url">View on eBay</a>
+                    </div>
+                </article>
+            </div>
+        </section>
+    </main>
+    
+    <footer class="footer">
+        <div class="container">
+            <p>Data provided by eBay RSS Feed. Updated every time you refresh the page.</p>
+            <p class="proxy-info">Using proxy: <span id="current-proxy">Static Content</span></p>
+            <p>&copy; 2024 Latest eBay Listings. All product information and images belong to their respective owners on eBay.</p>
+        </div>
+    </footer>
+
+    <!-- Update Notification -->
+    <div id="update-notification" class="update-notification">
+        <div id="notification-message">Listings updated successfully!</div>
+    </div>
+
+    <!-- Structured Data for SEO -->
+    <script type="application/ld+json" class="structured-data">
+    {
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        "name": "Latest eBay Listings",
+        "description": "Fresh deals and bargains from eBay",
+        "url": "",
+        "numberOfItems": "10",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "item": {
+                    "@type": "Product",
+                    "name": "Wireless Bluetooth Headphones Noise Cancelling Over Ear",
+                    "description": "Premium wireless Bluetooth headphones with active noise cancellation. Features include 30-hour battery life, comfortable over-ear design, and high-quality sound.",
+                    "image": "https://i.ebayimg.com/images/g/1HIAAOSw~WljcQ8X/s-l500.jpg",
+                    "url": "https://www.ebay.com/itm/123456789",
+                    "offers": {
+                        "@type": "Offer",
+                        "price": "29.99",
+                        "priceCurrency": "USD",
+                        "availability": "https://schema.org/InStock",
+                        "url": "https://www.ebay.com/itm/123456789"
+                    }
+                }
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "item": {
+                    "@type": "Product",
+                    "name": "Smart Watch Fitness Tracker Heart Rate Monitor",
+                    "description": "Advanced fitness tracker with heart rate monitoring, GPS tracking, and smartphone integration. Tracks steps, calories, sleep patterns, and multiple workout modes.",
+                    "image": "https://i.ebayimg.com/images/g/2HIAAOSw~WljcQ8X/s-l500.jpg",
+                    "url": "https://www.ebay.com/itm/234567890",
+                    "offers": {
+                        "@type": "Offer",
+                        "price": "45.99",
+                        "priceCurrency": "USD",
+                        "availability": "https://schema.org/InStock",
+                        "url": "https://www.ebay.com/itm/234567890"
+                    }
+                }
+            }
+        ]
+    }
+    </script>
+
+    <script>
+        // Global variables
+        let autoUpdateInterval;
+        let isUpdating = false;
+        let lastUpdateTime = null;
+        const AUTO_UPDATE_INTERVAL = 300000; // 5 minutes in milliseconds
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Start auto-update after page loads
+            setTimeout(() => {
+                fetchListings(true); // true = auto-fetch
+                startAutoUpdate();
+            }, 2000); // Wait 2 seconds for page to fully render
+        });
+        
+        function startAutoUpdate() {
+            // Clear any existing interval
+            if (autoUpdateInterval) {
+                clearInterval(autoUpdateInterval);
+            }
+            
+            // Set up periodic updates
+            autoUpdateInterval = setInterval(() => {
+                fetchListings(true); // true = auto-fetch
+            }, AUTO_UPDATE_INTERVAL);
+            
+            console.log(`Auto-update started: Refreshing every ${AUTO_UPDATE_INTERVAL / 1000} seconds`);
+        }
+        
+        function stopAutoUpdate() {
+            if (autoUpdateInterval) {
+                clearInterval(autoUpdateInterval);
+                autoUpdateInterval = null;
+                console.log('Auto-update stopped');
+            }
+        }
+        
+        function fetchListings(isAutoFetch = false) {
+            // Prevent multiple simultaneous updates
+            if (isUpdating) {
+                console.log('Update already in progress, skipping...');
+                return;
+            }
+            
+            isUpdating = true;
+            const rssUrl = 'https://www.rssground.com/services/ebay-rss/68bf9869d3926';
+            
+            // Update UI to show updating state
+            updateStatus('updating', 'Updating listings...');
+            if (!isAutoFetch) {
+                document.getElementById('refresh-button').disabled = true;
+                document.getElementById('refresh-button').textContent = 'Updating...';
+            }
+            
+            // Add updating class to listing cards
+            const listingCards = document.querySelectorAll('.listing-card');
+            listingCards.forEach(card => card.classList.add('updating'));
+            
+            // List of CORS proxies to try in order
+            const proxies = [
+                {
+                    name: 'CORS.io',
+                    url: 'https://cors.io/?',
+                    format: 'direct'
+                },
+                {
+                    name: 'AllOrigins',
+                    url: 'https://api.allorigins.win/get?url=',
+                    format: 'json'
+                }
+            ];
+            
+            const listingsContainer = document.getElementById('listings-container');
+            const currentProxyElement = document.getElementById('current-proxy');
+            
+            // Try each proxy in sequence until one works
+            tryProxy(0);
+            
+            function tryProxy(proxyIndex) {
+                if (proxyIndex >= proxies.length) {
+                    // All proxies failed
+                    handleUpdateError('All proxy services failed. Please try again later.', isAutoFetch);
+                    return;
+                }
+                
+                const proxy = proxies[proxyIndex];
+                currentProxyElement.textContent = proxy.name;
+                
+                let proxyUrl;
+                if (proxy.format === 'direct') {
+                    proxyUrl = proxy.url + encodeURIComponent(rssUrl);
+                } else {
+                    proxyUrl = proxy.url + encodeURIComponent(rssUrl);
+                }
+                
+                fetch(proxyUrl)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! Status: ${response.status}`);
+                        }
+                        
+                        if (proxy.format === 'json') {
+                            return response.json();
+                        } else {
+                            return response.text();
+                        }
+                    })
+                    .then(data => {
+                        let xmlString;
+                        if (proxy.format === 'json') {
+                            if (!data.contents) {
+                                throw new Error('No content received from proxy');
+                            }
+                            xmlString = data.contents;
+                        } else {
+                            xmlString = data;
+                        }
+                        
+                        const parser = new DOMParser();
+                        const xmlDoc = parser.parseFromString(xmlString, "text/xml");
+                        
+                        // Check for parsing errors
+                        const parserError = xmlDoc.querySelector('parsererror');
+                        if (parserError) {
+                            throw new Error('XML parsing error');
+                        }
+                        
+                        const items = xmlDoc.querySelectorAll('item');
+                        
+                        if (items.length === 0) {
+                            throw new Error('No listings found in RSS feed');
+                        }
+                        
+                        listingsContainer.innerHTML = '';
+                        
+                        // Prepare structured data
+                        const structuredData = {
+                            "@context": "https://schema.org",
+                            "@type": "ItemList",
+                            "name": "Latest eBay Listings",
+                            "description": "Fresh deals and bargains from eBay",
+                            "url": window.location.href,
+                            "numberOfItems": Math.min(10, items.length),
+                            "itemListElement": []
+                        };
+                        
+                        // Display the first 10 items (or fewer if there aren't 10)
+                        for (let i = 0; i < Math.min(10, items.length); i++) {
+                            const item = items[i];
+                            
+                            try {
+                                // Extract listing details
+                                const title = getElementText(item, 'title') || 'No title available';
+                                const link = getElementText(item, 'link') || '#';
+                                const description = getElementText(item, 'description') || 'No description available';
+                                const pubDate = getElementText(item, 'pubDate') || new Date().toISOString();
+                                
+                                // Extract image URL from description
+                                let imageUrl = '';
+                                const imgMatch = description.match(/<img[^>]+src="([^">]+)"/);
+                                if (imgMatch && imgMatch[1]) {
+                                    imageUrl = imgMatch[1];
+                                }
+                                
+                                // Extract price using improved method
+                                let price = extractPrice(description, title);
+                                let priceValue = 0;
+                                if (price !== 'Price not available') {
+                                    priceValue = parseFloat(price.replace(/[^0-9.]/g, ''));
+                                }
+                                
+                                // Clean description text
+                                const cleanDescription = description.replace(/<[^>]*>/g, '').substring(0, 200) + '...';
+                                
+                                // Add to structured data
+                                structuredData.itemListElement.push({
+                                    "@type": "ListItem",
+                                    "position": i + 1,
+                                    "item": {
+                                        "@type": "Product",
+                                        "name": title,
+                                        "description": cleanDescription,
+                                        "image": imageUrl || 'https://via.placeholder.com/300x200?text=No+Image',
+                                        "url": link,
+                                        "offers": {
+                                            "@type": "Offer",
+                                            "price": priceValue,
+                                            "priceCurrency": "USD",
+                                            "availability": "https://schema.org/InStock",
+                                            "url": link
+                                        }
+                                    }
+                                });
+                                
+                                // Create listing card with semantic HTML
+                                const listingCard = document.createElement('article');
+                                listingCard.className = 'listing-card';
+                                listingCard.setAttribute('itemscope', '');
+                                listingCard.setAttribute('itemtype', 'http://schema.org/Product');
+                                
+                                listingCard.innerHTML = `
+                                    <img src="${imageUrl || 'https://via.placeholder.com/300x200?text=No+Image'}" alt="${title}" class="listing-image" itemprop="image">
+                                    <div class="listing-content">
+                                        <h3 class="listing-title" itemprop="name">${title}</h3>
+                                        <div class="listing-price" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+                                            <span itemprop="priceCurrency" content="USD">${price}</span>
+                                            <meta itemprop="price" content="${priceValue}">
+                                            <meta itemprop="availability" content="https://schema.org/InStock">
+                                        </div>
+                                        <div class="listing-description" itemprop="description">${cleanDescription}</div>
+                                        <div class="listing-meta">
+                                            <span class="listing-source">
+                                                <span class="ebay-logo">e</span>
+                                                <span>eBay</span>
+                                            </span>
+                                            <time itemprop="availabilityStarts" datetime="${new Date(pubDate).toISOString()}">${new Date(pubDate).toLocaleDateString()}</time>
+                                        </div>
+                                        <a href="${link}" target="_blank" class="listing-link" itemprop="url">View on eBay</a>
+                                    </div>
+                                `;
+                                
+                                listingsContainer.appendChild(listingCard);
+                            } catch (itemError) {
+                                console.error('Error processing item:', itemError);
+                                // Skip this item and continue with the next
+                            }
+                        }
+                        
+                        // Update structured data in the page
+                        updateStructuredData(structuredData);
+                        
+                        // Handle successful update
+                        handleUpdateSuccess(isAutoFetch);
+                    })
+                    .catch(error => {
+                        console.error(`Error with proxy ${proxy.name}:`, error);
+                        // Try the next proxy
+                        tryProxy(proxyIndex + 1);
+                    });
+            }
+        }
+        
+        function handleUpdateSuccess(isAutoFetch) {
+            isUpdating = false;
+            lastUpdateTime = new Date();
+            
+            // Update UI
+            updateStatus('success', 'Auto-update enabled');
+            document.getElementById('last-updated').textContent = `Last updated: ${lastUpdateTime.toLocaleTimeString()}`;
+            document.getElementById('current-proxy').textContent = 'Live Content';
+            
+            if (!isAutoFetch) {
+                document.getElementById('refresh-button').disabled = false;
+                document.getElementById('refresh-button').textContent = 'Refresh Now';
+            }
+            
+            // Show notification
+            showNotification('Listings updated successfully!', false);
+            
+            console.log('Listings updated successfully at:', lastUpdateTime);
+        }
+        
+        function handleUpdateError(message, isAutoFetch) {
+            isUpdating = false;
+            
+            // Update UI
+            updateStatus('error', 'Update failed');
+            document.getElementById('current-proxy').textContent = 'Error';
+            
+            if (!isAutoFetch) {
+                document.getElementById('refresh-button').disabled = false;
+                document.getElementById('refresh-button').textContent = 'Refresh Now';
+                
+                // Show error message in container
+                const listingsContainer = document.getElementById('listings-container');
+                listingsContainer.innerHTML = `
+                    <div class="error">
+                        <h3>Unable to fetch live listings</h3>
+                        <p>${message}</p>
+                        <button class="retry-button" onclick="fetchListings()">Try Again</button>
+                    </div>
+                `;
+            }
+            
+            // Show error notification
+            showNotification(message, true);
+            
+            console.error('Update failed:', message);
+        }
+        
+        function updateStatus(status, text) {
+            const indicator = document.getElementById('status-indicator');
+            const statusText = document.getElementById('status-text');
+            
+            // Remove all status classes
+            indicator.classList.remove('updating', 'error');
+            
+            switch(status) {
+                case 'updating':
+                    indicator.classList.add('updating');
+                    break;
+                case 'error':
+                    indicator.classList.add('error');
+                    break;
+                default:
+                    // Success state - green indicator
+                    break;
+            }
+            
+            statusText.textContent = text;
+        }
+        
+        function showNotification(message, isError = false) {
+            const notification = document.getElementById('update-notification');
+            const notificationMessage = document.getElementById('notification-message');
+            
+            notificationMessage.textContent = message;
+            
+            if (isError) {
+                notification.classList.add('error');
+            } else {
+                notification.classList.remove('error');
+            }
+            
+            notification.classList.add('show');
+            
+            // Hide notification after 3 seconds
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+        
+        function updateStructuredData(data) {
+            const scriptElement = document.querySelector('.structured-data');
+            if (scriptElement) {
+                scriptElement.textContent = JSON.stringify(data, null, 2);
+            }
+        }
+        
+        function getElementText(parent, selector) {
+            const element = parent.querySelector(selector);
+            return element ? element.textContent.trim() : '';
+        }
+        
+        function extractPrice(description, title) {
+            // Try to extract price from description first, then from title
+            let textToSearch = description + ' ' + title;
+            
+            // Try multiple price patterns
+            const patterns = [
+                /\$([0-9,]+\.[0-9]{2})/,  // Standard price format: $XX.XX
+                /\$([0-9,]+)/,            // Price without decimals: $XX
+                /([0-9,]+\.[0-9]{2})/,    // Price without dollar sign: XX.XX
+                /([0-9,]+)/               // Just numbers: XX
+            ];
+            
+            for (const pattern of patterns) {
+                const match = textToSearch.match(pattern);
+                if (match && match[1]) {
+                    // Format the price with proper commas and dollar sign
+                    const priceValue = match[1].replace(/,/g, '');
+                    const formattedPrice = new Intl.NumberFormat('en-US', {
+                        style: 'currency',
+                        currency: 'USD',
+                        minimumFractionDigits: 2
+                    }).format(parseFloat(priceValue));
+                    
+                    return formattedPrice;
+                }
+            }
+            
+            return 'Price not available';
+        }
+        
+        // Handle page visibility change to optimize updates
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                // Page is hidden, pause auto-updates to save resources
+                stopAutoUpdate();
+                console.log('Page hidden, auto-update paused');
+            } else {
+                // Page is visible, resume auto-updates
+                startAutoUpdate();
+                console.log('Page visible, auto-update resumed');
+            }
+        });
+        
+        // Clean up on page unload
+        window.addEventListener('beforeunload', function() {
+            stopAutoUpdate();
+        });
+    </script>
+</body>
+</html>
